@@ -6,10 +6,19 @@ dependencies:
 - classy-prelude
 - classy-prelude-yesod
 - esqueleto
+- monad-logger
+- persistent
+- persistent-template
+- persistent-postgresql
+- template-haskell
 - yesod-auth
 - yesod-auth-hashdb
 - yesod-core
 - yesod-form
+- wai
+- wai-extra
+- wai-logger
+- warp
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.

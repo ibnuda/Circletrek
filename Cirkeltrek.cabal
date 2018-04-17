@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b4baa8144520c126d4e5943935b64fb2042530ae57acc39849371b5063014adf
+-- hash: 130568e8906ba78e7d3abb16ae293016701085b7a7df3d7355a3220b9de36158
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -14,6 +14,7 @@ library
       Application
       Foundation
       Home
+      Settings
   other-modules:
       Paths_Cirkeltrek
   hs-source-dirs:
@@ -23,6 +24,15 @@ library
     , classy-prelude
     , classy-prelude-yesod
     , esqueleto
+    , monad-logger
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , template-haskell
+    , wai
+    , wai-extra
+    , wai-logger
+    , warp
     , yesod-auth
     , yesod-auth-hashdb
     , yesod-core
@@ -42,6 +52,15 @@ executable Cirkeltrek
     , classy-prelude
     , classy-prelude-yesod
     , esqueleto
+    , monad-logger
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , template-haskell
+    , wai
+    , wai-extra
+    , wai-logger
+    , warp
     , yesod-auth
     , yesod-auth-hashdb
     , yesod-core

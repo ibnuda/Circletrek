@@ -1,14 +1,30 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes       #-}
 {-# LANGUAGE TemplateHaskell   #-}
 {-# LANGUAGE TypeFamilies      #-}
-{-# LANGUAGE ViewPatterns      #-}
 
 module Foundation where
 
+import           Database.Persist.Sql
 import           Yesod.Core
+import           Yesod.Core.Types
+
+import           Settings
 
 data App = App
+  { appSettings       :: ApplicationSettings
+  , appConnectionPool :: ConnectionPool
+  , appLogger         :: Logger
+  }
 
-mkYesodData "App" $(parseRoutesFile "routes")
+mkYesodData
+  "App"
+  [parseRoutes|
+    / HomeR GET
+  |]
 
-instance Yesod App
+instance Yesod App where
+  approot = ApprootRequest $ \app req ->
+    case appRoot $ appSettings app of
+      Nothing   -> getApprootText guessApproot app req
+      Just root -> root
