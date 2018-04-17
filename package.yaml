@@ -1,0 +1,29 @@
+name:    Cirkeltrek
+version: "0.0.0"
+
+dependencies:
+- base
+- classy-prelude
+- classy-prelude-yesod
+- esqueleto
+- yesod-auth
+- yesod-auth-hashdb
+- yesod-core
+- yesod-form
+
+# The library contains all of our application code. The executable
+# defined below is just a thin wrapper.
+library:
+  source-dirs: src
+
+# Runnable executable for our application
+executables:
+  Cirkeltrek:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - Cirkeltrek
