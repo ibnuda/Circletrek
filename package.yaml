@@ -3,18 +3,26 @@ version: "0.0.0"
 
 dependencies:
 - base
+- aeson
 - classy-prelude
 - classy-prelude-yesod
 - esqueleto
+- fast-logger
+- file-embed
+- http-client
+- http-client-tls
 - monad-logger
 - persistent
 - persistent-template
 - persistent-postgresql
 - template-haskell
+- yaml
+- yesod
 - yesod-auth
 - yesod-auth-hashdb
 - yesod-core
 - yesod-form
+- yesod-static
 - wai
 - wai-extra
 - wai-logger

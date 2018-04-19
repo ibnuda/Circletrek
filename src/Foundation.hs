@@ -6,8 +6,10 @@
 module Foundation where
 
 import           Database.Persist.Sql
+import           Network.HTTP.Client
 import           Yesod.Core
 import           Yesod.Core.Types
+import           Yesod.Static
 
 import           Settings
 
@@ -15,6 +17,8 @@ data App = App
   { appSettings       :: ApplicationSettings
   , appConnectionPool :: ConnectionPool
   , appLogger         :: Logger
+  , appStatic         :: Static
+  , appHttpManager    :: Manager
   }
 
 mkYesodData
