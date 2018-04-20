@@ -6,6 +6,7 @@ dependencies:
 - aeson
 - classy-prelude
 - classy-prelude-yesod
+- data-default
 - esqueleto
 - fast-logger
 - file-embed

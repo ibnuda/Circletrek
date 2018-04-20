@@ -1,9 +1,10 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes       #-}
-{-# LANGUAGE RankNTypes        #-}
-{-# LANGUAGE TemplateHaskell   #-}
-{-# LANGUAGE TypeFamilies      #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude     #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE QuasiQuotes           #-}
+{-# LANGUAGE RankNTypes            #-}
+{-# LANGUAGE TemplateHaskell       #-}
+{-# LANGUAGE TypeFamilies          #-}
 
 module Foundation where
 
@@ -13,11 +14,15 @@ import           ClassyPrelude.Yesod
 import           Database.Persist.Sql
 import           Network.HTTP.Client
 import           Text.Hamlet
+import           Yesod.Auth
+import           Yesod.Auth.HashDB
+import           Yesod.Auth.Message
 import           Yesod.Core
 import           Yesod.Core.Types
 import           Yesod.Form
 import           Yesod.Static
 
+import           Model
 import           Settings
 
 data App = App
@@ -53,7 +58,7 @@ instance Yesod App where
         $maybe route <- mcurrentroute
           <p> You're at #{show route}.
         $nothing
-          <p> You're lost.
+          <p> Apparently you're lost.
         ^{widget}
       |]
     withUrlRenderer $(hamletFile "templates/wrapper.hamlet")
@@ -64,3 +69,19 @@ instance YesodPersist App where
     master <- getYesod
     runSqlPool action $ appConnectionPool master
 
+instance RenderMessage App FormMessage where
+  renderMessage _ _ = defaultFormMessage
+
+instance YesodAuth App where
+  type AuthId App = UsersId
+  loginDest _ = HomeR
+  logoutDest _ = HomeR
+  redirectToReferer _ = False
+  authPlugins _ = [authHashDB (Just . UniqueUsername)]
+  authenticate creds = liftHandler $ runDB $ do
+    x <- getBy $ UniqueUsername $ credsIdent creds
+    case x of
+      Nothing             -> return $ UserError InvalidLogin
+      Just (Entity uid _) -> return $ Authenticated uid
+
+instance YesodAuthPersist App

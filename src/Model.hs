@@ -4,7 +4,7 @@
 {-# LANGUAGE GADTs                      #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE NoImplicitParams           #-}
+{-# LANGUAGE NoImplicitPrelude          #-}
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE QuasiQuotes                #-}
 {-# LANGUAGE TemplateHaskell            #-}
@@ -13,6 +13,7 @@ module Model where
 
 import           ClassyPrelude.Yesod
 import           Database.Persist.TH
+import           Yesod.Auth.HashDB
 
 import           Model.Grouping
 
@@ -94,3 +95,7 @@ share
       zappedBy UsersId Maybe
       deriving Show Eq
   |]
+
+instance HashDBUser Users where
+  userPasswordHash = usersPassword
+  setPasswordHash h u = u {usersPassword = Just h}

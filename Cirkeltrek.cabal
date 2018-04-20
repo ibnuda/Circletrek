@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ac82d237ef701a1dbc867cec1e99eb5d5bb8ad007265c41dc76968c2c000666f
+-- hash: fd7a7246f0613d88e47e6f2e5ce057afc082ed5215a32651d8e7e52850604853
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -26,6 +26,7 @@ library
     , base
     , classy-prelude
     , classy-prelude-yesod
+    , data-default
     , esqueleto
     , fast-logger
     , file-embed
@@ -63,6 +64,7 @@ executable Cirkeltrek
     , base
     , classy-prelude
     , classy-prelude-yesod
+    , data-default
     , esqueleto
     , fast-logger
     , file-embed

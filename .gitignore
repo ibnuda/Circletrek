@@ -19,4 +19,4 @@ cabal.sandbox.config
 *~
 \#*
 TAGS
-Cirkeltrek.cabal
+*.cabal
