@@ -57,3 +57,10 @@ instance Yesod App where
         ^{widget}
       |]
     withUrlRenderer $(hamletFile "templates/wrapper.hamlet")
+
+instance YesodPersist App where
+  type YesodPersistBackend App = SqlBackend
+  runDB action = do
+    master <- getYesod
+    runSqlPool action $ appConnectionPool master
+
