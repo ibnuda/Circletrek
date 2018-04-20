@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: af9d13db555581390fe9273f4721790b8f73e3e1653aa95d62e7653899693c62
+-- hash: 08696098b1b731323e73e7ce93701cbb0163a441a1968de5ea78ab37d19644b7
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -33,6 +33,7 @@ library
     , persistent
     , persistent-postgresql
     , persistent-template
+    , shakespeare
     , template-haskell
     , wai
     , wai-extra
@@ -69,6 +70,7 @@ executable Cirkeltrek
     , persistent
     , persistent-postgresql
     , persistent-template
+    , shakespeare
     , template-haskell
     , wai
     , wai-extra
