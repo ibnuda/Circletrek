@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fd7a7246f0613d88e47e6f2e5ce057afc082ed5215a32651d8e7e52850604853
+-- hash: f0531eee1458086fe8489757aa53ee4e4990405053ccaac6e1d42cee760424a1
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -57,6 +57,44 @@ executable Cirkeltrek
       Paths_Cirkeltrek
   hs-source-dirs:
       app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Cirkeltrek
+    , aeson
+    , base
+    , classy-prelude
+    , classy-prelude-yesod
+    , data-default
+    , esqueleto
+    , fast-logger
+    , file-embed
+    , http-client
+    , http-client-tls
+    , monad-logger
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , shakespeare
+    , template-haskell
+    , wai
+    , wai-extra
+    , wai-logger
+    , warp
+    , yaml
+    , yesod
+    , yesod-auth
+    , yesod-auth-hashdb
+    , yesod-core
+    , yesod-form
+    , yesod-static
+  default-language: Haskell2010
+
+executable Seed
+  main-is: Main.hs
+  other-modules:
+      Paths_Cirkeltrek
+  hs-source-dirs:
+      seed
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Cirkeltrek
