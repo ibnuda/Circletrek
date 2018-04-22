@@ -16,6 +16,7 @@ import           Language.Haskell.TH.Syntax
 import           Network.Wai.Handler.Warp
 import           Yesod.Default.Config2
 import           Yesod.Default.Util
+import           Yesod.Static
 
 data ApplicationSettings = ApplicationSettings
   { appStaticDir              :: String
@@ -67,3 +68,4 @@ widgetFile =
   where
     widgetFileSettings :: WidgetFileSettings
     widgetFileSettings = def
+
