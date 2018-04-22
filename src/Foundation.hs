@@ -56,13 +56,7 @@ instance Yesod App where
     maut <- maybeAuth
     mmessage <- getMessage
     pagecontent <- widgetToPageContent $ do
-      [whamlet|
-        $maybe aut <- maut
-          <a href=@{SigninR LogoutR}> Logout
-        $nothing
-          <a href=@{SigninR LoginR}> Login
-        ^{widget}
-      |]
+      $(widgetFile "def")
     withUrlRenderer $(hamletFile "templates/wrapper.hamlet")
   authRoute _ = Just $ SigninR LoginR
   isAuthorized (SigninR _) _ = return Authorized
