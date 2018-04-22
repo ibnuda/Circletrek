@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f0531eee1458086fe8489757aa53ee4e4990405053ccaac6e1d42cee760424a1
+-- hash: d861629c79fdb1cf06fd75ce62386af16a3660c0912ab0ae3a6ec30a93346e12
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -16,6 +16,7 @@ library
       Home
       Model
       Model.Grouping
+      Profile
       Settings
   other-modules:
       Paths_Cirkeltrek
