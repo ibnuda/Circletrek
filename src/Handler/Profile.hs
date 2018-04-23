@@ -1,14 +1,11 @@
+{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes       #-}
-module Profile where
+module Handler.Profile where
 
-import           Foundation
+import           Import
 
 import           Database.Persist.Sql
-import           Yesod.Auth
-import           Yesod.Core
-
-import           Model
 
 getProfileR :: Handler Html
 getProfileR = do

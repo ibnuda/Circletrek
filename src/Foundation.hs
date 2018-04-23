@@ -8,24 +8,18 @@
 
 module Foundation where
 
-import           ClassyPrelude.Yesod
+import           Import.NoFoundation hiding ((&&.), (==.))
 
-import           Database.Persist.Sql
-import           Network.HTTP.Client
+import           Database.Esqueleto
 import           Text.Hamlet
 import           Text.Jasmine
-import           Yesod.Auth
+
 import           Yesod.Auth.HashDB
 import           Yesod.Auth.Message
-import           Yesod.Core
 import           Yesod.Core.Types
 import           Yesod.Default.Util
 import           Yesod.Form
 import           Yesod.Static
-
-import           Model
-import           Settings
-import           Settings.StaticFiles
 
 data App = App
   { appSettings       :: ApplicationSettings
@@ -38,10 +32,11 @@ data App = App
 mkYesodData
   "App"
   [parseRoutes|
-    /        HomeR     GET
-    /static  StaticR   Static appStatic
-    /auth    SigninR   Auth getAuth
-    /profile ProfileR  GET
+    /                HomeR        GET
+    /static          StaticR      Static appStatic
+    /auth            SigninR      Auth getAuth
+    /profile         ProfileR     GET
+    /admin/category  AdmCategoryR GET
   |]
 
 type Form a = Html -> MForm (HandlerFor App) (FormResult a, Widget)
@@ -82,7 +77,7 @@ instance Yesod App where
   isAuthorized (SigninR _) _ = return Authorized
   isAuthorized HomeR _       = return Authorized
   isAuthorized (StaticR _) _ = return Authorized
-  isAuthorized ProfileR _    = isLoggedIn
+  isAuthorized _ _    = isLoggedIn
 
 isLoggedIn :: Handler AuthResult
 isLoggedIn = do
@@ -90,6 +85,24 @@ isLoggedIn = do
   case maut of
     Nothing -> return $ Unauthorized "login please"
     Just _  -> return Authorized
+
+getUserAndGrouping :: Handler (Maybe (Key Users, Text, Grouping))
+getUserAndGrouping = do
+  maut <- maybeAuth
+  case maut of
+    Nothing -> return Nothing
+    Just (Entity uid user) -> do
+      [gro] <-
+        liftHandler $
+        runDB $
+        select $
+        from $ \(group, user) -> do
+          where_
+            (user ^. UsersId ==. val uid
+             &&. group ^. GroupsId ==. user ^. UsersGroupId)
+          limit 1
+          return (group ^. GroupsGrouping)
+      return $ Just (uid, usersUsername user, unValue gro)
 
 instance YesodPersist App where
   type YesodPersistBackend App = SqlBackend

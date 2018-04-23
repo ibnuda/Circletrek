@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e0ee5a254ef7241a3e87a0539079ef691434a9dc90751c9daf2b968912c9042c
+-- hash: 40064a7405d71b43fd66e1b51719d76bf74d9ac7f26fbaadf3eed1ba1b13173d
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -12,11 +12,16 @@ cabal-version:  >= 1.10
 library
   exposed-modules:
       Application
+      DBOp.CRUDCategory
+      Flux.AdmCategory
       Foundation
-      Home
+      Handler.Adm.Category
+      Handler.Home
+      Handler.Profile
+      Import
+      Import.NoFoundation
       Model
       Model.Grouping
-      Profile
       Settings
       Settings.StaticFiles
   other-modules:
