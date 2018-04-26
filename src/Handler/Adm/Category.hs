@@ -48,20 +48,35 @@ getAdmCategoryR = do
     [whamlet|
       <form method=post enctype=#{enctc}>
         ^{widc}
-        <input .button-primary value=create type=submit>
+        <input .button-primary name=create value=create type=submit>
       <hr>
       <form method=post enctype=#{enctl}>
         ^{widl}
-        <input .button-primary value=delete type=submit>
+        <input .button-primary name=delete value=delete type=submit>
     |]
 
 postAdmCategoryR :: Handler Html
 postAdmCategoryR = do
   (uid, name, group) <- allowedToAdmin
-  ((res, _), _) <- runFormPost createCategoryForm
-  case res of
-    FormFailure x -> invalidArgs x
-    FormSuccess r -> do
-      _ <- createCategory group (createCategoryFormName r)
-      redirect AdmCategoryR
-    _ -> invalidArgs ["Good job, smarty pants!"]
+  createparam <- lookupPostParam "create"
+  deleteparam <- lookupPostParam "delete"
+  case (createparam, deleteparam) of
+    (Nothing, Nothing) -> invalidArgs ["At least be sure of what you want."]
+    (Just _, Nothing) -> do
+      ((res, _), _) <- runFormPost createCategoryForm
+      case res of
+        FormFailure x -> invalidArgs x
+        FormSuccess r -> do
+          _ <- createCategory group (createCategoryFormName r)
+          redirect AdmCategoryR
+        _ -> invalidArgs ["Good job, smarty pants!"]
+    (Nothing, Just _) -> do
+      allcategories <- getAllCategories
+      ((res, _), _) <- runFormPost $ selectCategoryForm allcategories
+      case res of
+        FormFailure x -> invalidArgs x
+        FormSuccess r -> do
+          deleteCategoryCascade group $ toSqlKey $ selectCategoryFormId r
+          redirect AdmCategoryR
+        _ -> invalidArgs ["Good job, smarty pants!"]
+    (Just _, Just _) -> invalidArgs ["Make up your mind, my dear admin."]
