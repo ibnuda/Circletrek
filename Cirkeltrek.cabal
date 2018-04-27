@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e0bfc42472f36a14d5ffc913f6b4a579cab5854f302ec6a7df6122cf9fba9171
+-- hash: 6f934390ceb9630c08b299a4f4bf6f1857c01efdc878ac6e48af496d77c2e38b
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -23,6 +23,7 @@ library
       Handler.Profile
       Import
       Import.NoFoundation
+      Import.Util
       Model
       Model.Grouping
       Settings
