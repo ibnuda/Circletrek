@@ -30,14 +30,6 @@ selectCategoryForm cats =
     catlist =
       map (\(Entity cid (Categories name)) -> (name, fromSqlKey $ cid)) cats
 
-allowedToAdmin :: Handler (Key Users, Text, Grouping)
-allowedToAdmin = do
-  midnamegroup <- getUserAndGrouping
-  case midnamegroup of
-    Nothing -> permissionDenied "You're not allowed to see this page."
-    (Just (uid, name, Administrator)) -> return (uid, name, Administrator)
-    (Just (uid, name, _)) -> permissionDenied "You're not the admin of this site."
-
 getAdmCategoryR :: Handler Html
 getAdmCategoryR = do
   (uid, name, group) <- allowedToAdmin
