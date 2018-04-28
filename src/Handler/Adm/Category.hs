@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes       #-}
+{-# LANGUAGE TemplateHaskell   #-}
 module Handler.Adm.Category where
 
 import           Import
@@ -36,16 +36,9 @@ getAdmCategoryR = do
   (widc, enctc) <- generateFormPost createCategoryForm
   allcategories <- getAllCategories
   (widl, enctl) <- generateFormPost $ selectCategoryForm allcategories
-  defaultLayout
-    [whamlet|
-      <form method=post enctype=#{enctc}>
-        ^{widc}
-        <input .button-primary name=create value=create type=submit>
-      <hr>
-      <form method=post enctype=#{enctl}>
-        ^{widl}
-        <input .button-primary name=delete value=delete type=submit>
-    |]
+  defaultLayout $ do
+    setTitle "Category Administration"
+    $(widgetFile "adm-category")
 
 postAdmCategoryR :: Handler Html
 postAdmCategoryR = do

@@ -55,3 +55,4 @@ deleteForumById fid = do
     where_ (forum ^. ForumsId ==. val fid)
     return forum
   forM_ forums (deleteCascade . entityKey)
+

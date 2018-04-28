@@ -1,14 +1,16 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes       #-}
+{-# LANGUAGE TemplateHaskell   #-}
 module Handler.Home where
 
 import           Import
 
+import           Database.Esqueleto
+import           Flux.Home
+
 getHomeR :: Handler Html
-getHomeR =
+getHomeR = do
+  categoriesforindex <- getCategoriesForIndex
   defaultLayout $ do
-    setTitle "Nice"
-    [whamlet|
-      <h4> Nice.
-    |]
+    setTitle "Index"
+    $(widgetFile "home")
