@@ -1,0 +1,36 @@
+<h4>
+    <a href=@{HomeR}> Index
+    <span> » 
+    <a href=@{ForumR fid}> #{forumsName $ entityVal forum}
+<table>
+  <thead>
+    <tr>
+      <th width="60%"> Subject
+      <th width="20%"> Replies Count
+      <th width="30%"> Last Active
+  <tbody>
+    $forall (Entity key (Topics fid p s rc st lp lpid lposter lock)) <- topics
+      <tr>
+        <td>
+          <strong>
+            <a href=@{HomeR}> #{s}
+            <span>
+              <small> by #{p}
+        <td> #{rc}
+        $maybe lastpost <- lp
+          $maybe lastpostid <- lpid
+            $maybe lastposter <- lposter
+              <td>
+                <a href=@{HomeR}#post-#{rc}>
+                  #{show $ utcToLocalTime timeZone lastpost}
+                <small> by #{lastposter}
+
+            $nothing
+              <td> Empty
+          $nothing
+            <td> Empty
+        $nothing
+          <td> Empty
+<form method=post action=@{ForumR fid}>
+ ^{wid}
+  <input .button-primary value=submit type=submit>

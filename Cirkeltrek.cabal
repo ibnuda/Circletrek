@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3fbfd29efd03fac59b725b0b8693799e72aa4ffe7f2fb1b9d0b9fed69543d1cc
+-- hash: 8544cbec364e66ad92188c1912b6afa41c8b90ea1da6ef8ef064e72ae96f5172
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -14,12 +14,16 @@ library
       Application
       DBOp.CRUDCategory
       DBOp.CRUDForum
+      DBOp.CRUDPost
+      DBOp.CRUDTopic
       Flux.AdmCategory
       Flux.AdmForum
+      Flux.Forum
       Flux.Home
       Foundation
       Handler.Adm.Category
       Handler.Adm.Forum
+      Handler.Forum
       Handler.Home
       Handler.Profile
       Import
@@ -51,6 +55,7 @@ library
     , persistent-template
     , shakespeare
     , template-haskell
+    , time
     , wai
     , wai-extra
     , wai-logger
@@ -90,6 +95,7 @@ executable Cirkeltrek
     , persistent-template
     , shakespeare
     , template-haskell
+    , time
     , wai
     , wai-extra
     , wai-logger
@@ -129,6 +135,7 @@ executable Seed
     , persistent-template
     , shakespeare
     , template-haskell
+    , time
     , wai
     , wai-extra
     , wai-logger
