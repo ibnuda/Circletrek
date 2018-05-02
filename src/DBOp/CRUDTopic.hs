@@ -8,7 +8,7 @@
 module DBOp.CRUDTopic where
 
 import           Import                        hiding (Value, groupBy, on,
-                                                (==.))
+                                                update, (=.), (==.))
 
 import           Database.Esqueleto
 import           Database.Esqueleto.PostgreSQL
@@ -31,3 +31,14 @@ insertTopic fid poster subject = do
       topicsLastPoster = Nothing
       topicsIsLocked = False
   insert Topics {..}
+
+selectTopicById tid = do
+  select $ from $ \topic -> do
+    where_ (topic ^. TopicsId ==. val tid)
+    limit 1
+    return topic
+
+updateTopicIsLocked tid locked = do
+  update $ \topic -> do
+    set topic [TopicsIsLocked =. val locked]
+    where_ (topic ^. TopicsId ==. val tid)

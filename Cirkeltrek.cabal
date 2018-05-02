@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8544cbec364e66ad92188c1912b6afa41c8b90ea1da6ef8ef064e72ae96f5172
+-- hash: 8146799c97967808e50779a0ee879c0e0efa4025b3146f3a23d42319258bc009
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -20,6 +20,7 @@ library
       Flux.AdmForum
       Flux.Forum
       Flux.Home
+      Flux.Topic
       Foundation
       Handler.Adm.Category
       Handler.Adm.Forum
