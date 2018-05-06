@@ -30,6 +30,7 @@ import           Handler.Profile
 import           Handler.Adm.Category
 import           Handler.Adm.Forum
 import           Handler.Forum
+import           Handler.Topic
 
 mkYesodDispatch "App" resourcesApp
 

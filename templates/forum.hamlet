@@ -20,7 +20,7 @@
         <tr>
           <td>
             <strong>
-              <a href=@{HomeR}> #{s}
+              <a href=@{TopicR $ fromSqlKey key}> #{s}
               <span>
                 <small> by #{p}
           <td> #{rc}
