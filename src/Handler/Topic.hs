@@ -39,8 +39,8 @@ postTopicR tid = do
 getTopicPageR :: Int64 -> Int64 -> Handler Html
 getTopicPageR tid page = do
   (uid, name, group) <- allowedToPost
-  posts <- getPostsInTopic (toSqlKey tid) page
   topic <- getTopicById $ toSqlKey tid
+  posts <- getPostsInTopic (toSqlKey tid) page
   forum <- getForumsInformation . topicsForumId . entityVal $ topic
   (wid, enct) <- generateFormPost postForm
   defaultLayout $(widgetFile "topic")

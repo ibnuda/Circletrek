@@ -38,7 +38,7 @@ replyTopicByPosting uid uname tid content = do
       let fid = topicsForumId $ entityVal topic
           num = topicsRepliesCount $ entityVal topic
           page = floor $ (toRational num) / 25 + 1 :: Int64
-      pid <- liftHandler $ runDB $ insertPost tid (num + 1) uname uid content
+      pid <- liftHandler $ runDB $ insertPost tid (num + 2) uname uid content
       liftHandler $
         runDB $ do
           updateForumIncrementReplyAndLasts
@@ -47,4 +47,4 @@ replyTopicByPosting uid uname tid content = do
             pid
             now
           updateTopicIncrementReplyAndLasts tid uname pid now
-      return (tid, page, num + 1)
+      return (tid, page, num + 2)

@@ -18,7 +18,7 @@ getPostsInTopic ::
      , YesodPersist (HandlerSite m)
      , MonadHandler m
      )
-  => Key Posts
+  => Key Topics
   -> Int64
   -> m [Entity Posts]
 getPostsInTopic tid page

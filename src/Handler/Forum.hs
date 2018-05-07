@@ -10,6 +10,7 @@ import           Data.Time.LocalTime
 import           Database.Esqueleto
 
 import           Flux.Forum
+import           Handler.Topic
 
 data CreateTopicForm = CreateTopicForm
   { createTopicFormSubject :: Text
@@ -60,6 +61,6 @@ postForumR fid = do
               name
               (createTopicFormSubject r)
               (unTextarea $ createTopicFormContent r)
-          redirect $ ForumR fid -- we will back to it later.
+          redirect $ TopicPageR (fromSqlKey tid) 1
         _ -> invalidArgs ["Come on..."]
     _ -> invalidArgs ["Make up your mind!"]
