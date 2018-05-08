@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1d9998cdd2c8dffb4e1bb34c7eb073bac9a64a60f464255c172e5cce723b6908
+-- hash: ced41b3374414543c4a0650f1d8a2b28e8dbe85fb8ab214e656b05de00f0fe88
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -27,6 +27,7 @@ library
       Handler.Adm.Forum
       Handler.Forum
       Handler.Home
+      Handler.Post
       Handler.Profile
       Handler.Topic
       Import
