@@ -12,6 +12,8 @@
           <a .navigation-link href=@{SigninR LogoutR}> Logout
       $nothing
         <li .navigation-item>
+          <a .navigation-link href=@{RegisterR}> Register
+        <li .navigation-item>
           <a .navigation-link href=@{SigninR LoginR}> Login
 <section .container>
   ^{widget}

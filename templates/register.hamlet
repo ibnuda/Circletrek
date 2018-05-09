@@ -1,0 +1,3 @@
+<form action=@{RegisterR} method=post enctype=#{enct}>
+  ^{wid}
+  <input .button-primary name=register value=register type=submit>

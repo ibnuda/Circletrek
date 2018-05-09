@@ -104,3 +104,8 @@ updateForumIncrementReplyAndLasts fid username pid last = do
       , ForumsLastPost =. (val $ Just last)
       ]
     where_ (forum ^. ForumsId ==. val fid)
+
+updateForumIncrementTopic fid = do
+  update $ \forum -> do
+    set forum [ForumsTopicsCount +=. (val 1)]
+    where_ (forum ^. ForumsId ==. val fid)
