@@ -29,6 +29,7 @@ import           Handler.Home
 import           Handler.User
 import           Handler.Adm.Category
 import           Handler.Adm.Forum
+import           Handler.Adm.Ban
 import           Handler.Forum
 import           Handler.Topic
 import           Handler.Post

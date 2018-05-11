@@ -7,7 +7,7 @@ import           Import
 
 import           Database.Esqueleto
 
-import           Flux.AdmCategory
+import           Flux.Adm.Category
 
 data CreateCategoryForm = CreateCategoryForm
   { createCategoryFormName :: Text

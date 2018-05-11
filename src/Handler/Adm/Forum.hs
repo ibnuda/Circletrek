@@ -7,8 +7,8 @@ import           Import
 
 import           Database.Esqueleto
 
-import           Flux.AdmCategory
-import           Flux.AdmForum
+import           Flux.Adm.Category
+import           Flux.Adm.Forum
 
 data CreateForumForm = CreateForumForm
   { createForumFormName     :: Text

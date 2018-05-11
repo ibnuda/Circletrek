@@ -33,20 +33,22 @@ data App = App
 mkYesodData
   "App"
   [parseRoutes|
-    /                    HomeR        GET
-    /static              StaticR      Static appStatic
-    /auth                SigninR      Auth getAuth
-    /register            RegisterR    GET POST
-    /profile             ProfileR     GET
-    /user/#Int64         UserR        GET
-    /admin/category      AdmCategoryR GET POST
-    /admin/forum         AdmForumR    GET POST
-    /forum/#Int64        ForumR       GET POST
-    /forum/#Int64/#Int64 ForumPageR   GET
-    /topic/#Int64        TopicR       GET POST
-    /topic/#Int64/#Int64 TopicPageR   GET
-    /post/#Int64         PostR        GET
-    /post/#Int64/edit    PostEditR    GET POST
+    /                    HomeR          GET
+    /static              StaticR        Static appStatic
+    /auth                SigninR        Auth getAuth
+    /register            RegisterR      GET POST
+    /profile             ProfileR       GET
+    /user/#Int64         UserR          GET
+    /admin/category      AdmCategoryR   GET POST
+    /admin/forum         AdmForumR      GET POST
+    /admin/ban           AdmBanR        GET POST
+    /admin/ban/options   AdmBanOptionsR POST
+    /forum/#Int64        ForumR         GET POST
+    /forum/#Int64/#Int64 ForumPageR     GET
+    /topic/#Int64        TopicR         GET POST
+    /topic/#Int64/#Int64 TopicPageR     GET
+    /post/#Int64         PostR          GET
+    /post/#Int64/edit    PostEditR      GET POST
   |]
 
 type Form a = Html -> MForm (HandlerFor App) (FormResult a, Widget)
@@ -148,17 +150,24 @@ instance YesodAuth App where
 
 instance YesodAuthPersist App
 
-allowedToAdmin :: Handler (Key Users, Text, Grouping)
-allowedToAdmin = do
-  midnamegroup <- getUserAndGrouping
-  case midnamegroup of
-    Nothing -> permissionDenied "You're not allowed to see this page."
-    (Just (uid, name, Administrator)) -> return (uid, name, Administrator)
-    (Just (uid, name, _)) -> permissionDenied "You're not the admin of this site."
-
+allowedToPost :: Handler (Key Users, Text, Grouping)
 allowedToPost = do
   midnamegroup <- getUserAndGrouping
   case midnamegroup of
     Nothing -> permissionDenied "You're not allowed to see this page."
     (Just (uid, name, Banned)) -> permissionDenied "You're banned."
-    (Just (uid, name, _)) -> return (uid, name, Administrator)
+    (Just (uid, name, group)) -> return (uid, name, group)
+
+allowedToMod :: Handler (Key Users, Text, Grouping)
+allowedToMod = do
+  (uid, name, group) <- allowedToPost
+  case group of
+    x | x == Administrator || x == Moderator -> return (uid, name, group)
+    otherwise -> permissionDenied "You are not allowed to moderate this site."
+
+allowedToAdmin :: Handler (Key Users, Text, Grouping)
+allowedToAdmin = do
+  (uid, name, group) <- allowedToPost
+  case group of
+    Administrator -> return (uid, name, group)
+    _ -> permissionDenied "You are not allowed to administer this site."
