@@ -39,6 +39,7 @@ mkYesodData
     /register            RegisterR      GET POST
     /profile             ProfileR       GET
     /user/#Int64         UserR          GET
+    /admin               AdmR           GET
     /admin/category      AdmCategoryR   GET POST
     /admin/forum         AdmForumR      GET POST
     /admin/ban           AdmBanR        GET POST
@@ -77,7 +78,7 @@ instance Yesod App where
       genFilename lbs = "autogen-" ++ base64md5 lbs
   defaultLayout widget = do
     master <- getYesod
-    maut <- maybeAuth
+    muidnamegroup <- getUserAndGrouping
     mmessage <- getMessage
     pagecontent <- widgetToPageContent $ do
       addStylesheet $ StaticR css_main_css

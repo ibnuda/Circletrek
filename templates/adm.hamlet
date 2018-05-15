@@ -1,0 +1,12 @@
+<p>
+  <a href=@{AdmBanR}> Ban
+
+$case group
+  $of Administrator
+    <p>
+      <a href=@{AdmCategoryR}> Category
+    <p>
+      <a href=@{AdmForumR}> Forum
+  $of Moderator
+  $of Member
+  $of Banned

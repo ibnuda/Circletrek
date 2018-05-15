@@ -27,6 +27,7 @@ import           Settings                             (ApplicationSettings (..),
 
 import           Handler.Home
 import           Handler.User
+import           Handler.Adm
 import           Handler.Adm.Category
 import           Handler.Adm.Forum
 import           Handler.Adm.Ban
