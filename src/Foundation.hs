@@ -172,3 +172,40 @@ allowedToAdmin = do
   case group of
     Administrator -> return (uid, name, group)
     _ -> permissionDenied "You are not allowed to administer this site."
+
+adminLayout :: Key Users -> Text -> Grouping -> Widget -> Handler Html
+adminLayout uid name group widget = do
+  mcurrentroute <- getCurrentRoute
+  mmessage <- getMessage
+  pagecontent <- widgetToPageContent $ do
+    addStylesheet $ StaticR css_normalize_css
+    addStylesheet $ StaticR css_milligram_min_css
+    addStylesheet $ StaticR css_main_css
+    $(widgetFile "adm")
+  withUrlRenderer $(hamletFile "templates/wrapper.hamlet")
+
+adminRouteToText :: Route App -> Text
+adminRouteToText AdmR           = "Index"
+adminRouteToText AdmBanR        = "Manage Ban"
+adminRouteToText AdmBanOptionsR = "Ban Options"
+adminRouteToText AdmCategoryR   = "Manage Categories"
+adminRouteToText AdmForumR      = "Manage Forums"
+
+profileLayout ::
+     Key Users -> Text -> Grouping -> Entity Users -> Widget -> Handler Html
+profileLayout uid name group user widget = do
+  let allowededit = allowedToEditProfile uid group (entityKey user)
+  mcurrentroute <- getCurrentRoute
+  mmessage <- getMessage
+  pagecontent <- widgetToPageContent $ do
+    addStylesheet $ StaticR css_normalize_css
+    addStylesheet $ StaticR css_milligram_min_css
+    addStylesheet $ StaticR css_main_css
+    $(widgetFile "profile")
+  withUrlRenderer $(hamletFile "templates/wrapper.hamlet")
+
+allowedToEditProfile uid group profileid =
+  profileid == uid || group == Administrator || group == Moderator
+
+profileRouteToText :: Route App -> Text
+profileRouteToText ProfileR = "Common Information"

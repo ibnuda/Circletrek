@@ -32,11 +32,11 @@ banUserForm = renderDivs $ BanUserForm <$> areq textField "Username" Nothing
 
 getAdmBanR :: Handler Html
 getAdmBanR = do
-  (uid, name, gruop) <- allowedToMod
+  (uid, name, group) <- allowedToMod
   (wid, enct) <- generateFormPost banUserForm
   bans <- getAllBanneds
   let banneds = map (\(Value uid, b, Value ename) -> (uid, b, ename)) bans
-  defaultLayout $(widgetFile "adm-ban")
+  adminLayout uid name group $(widgetFile "adm-ban")
 
 postAdmBanR :: Handler Html
 postAdmBanR = do
@@ -71,5 +71,5 @@ postAdmBanOptionsR = do
     FormSuccess r -> do
       (wid, enct) <-
         generateFormPost . banUserOptionsForm . banUserFormUsername $ r
-      defaultLayout $(widgetFile "adm-ban-options")
+      adminLayout uid name group $(widgetFile "adm-ban-options")
     _ -> invalidArgs ["Fill your input correctly."]

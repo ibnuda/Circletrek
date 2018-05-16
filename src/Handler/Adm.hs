@@ -9,4 +9,4 @@ import           Import
 getAdmR :: Handler Html
 getAdmR = do
   (uid, name, group) <- allowedToMod
-  defaultLayout $(widgetFile "adm")
+  adminLayout uid name group [whamlet|Hello there. |]

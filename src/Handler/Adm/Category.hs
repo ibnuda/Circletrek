@@ -36,7 +36,7 @@ getAdmCategoryR = do
   (widc, enctc) <- generateFormPost createCategoryForm
   allcategories <- getAllCategories
   (widl, enctl) <- generateFormPost $ selectCategoryForm allcategories
-  defaultLayout $ do
+  adminLayout uid name group $ do
     setTitle "Category Administration"
     $(widgetFile "adm-category")
 
