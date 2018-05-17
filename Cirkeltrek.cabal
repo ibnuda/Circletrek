@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: be478473889e1800099c7765403b2d8cd40e42891190aaa39a9ddd3be71daf73
+-- hash: f7806638b41817081e52bb64d51bae3ad469281b2edb3ace88ef289fce09ff1a
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -68,6 +68,7 @@ library
     , persistent-template
     , shakespeare
     , template-haskell
+    , text
     , time
     , wai
     , wai-extra
@@ -108,6 +109,7 @@ executable Cirkeltrek
     , persistent-template
     , shakespeare
     , template-haskell
+    , text
     , time
     , wai
     , wai-extra
@@ -148,6 +150,7 @@ executable Seed
     , persistent-template
     , shakespeare
     , template-haskell
+    , text
     , time
     , wai
     , wai-extra

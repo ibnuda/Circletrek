@@ -19,6 +19,7 @@ dependencies:
 - persistent-postgresql
 - shakespeare
 - template-haskell
+- text
 - time
 - yaml
 - yesod

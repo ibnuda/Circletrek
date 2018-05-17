@@ -1,0 +1,10 @@
+$case group
+  $of Administrator
+    <form action=@{AdmUserPromoteExeR} method=post encttype=#{enct}>
+      ^{wid}
+      <input .button name=promote value=ban type=submit>
+  $of Moderator
+    <form action=@{AdmUserPromoteExeR} method=post encttype=#{enct}>
+      ^{wid}
+      <input .button name=promote value=ban type=submit>
+  $of _
