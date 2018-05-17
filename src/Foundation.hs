@@ -44,6 +44,7 @@ mkYesodData
     /admin/forum         AdmForumR      GET POST
     /admin/ban           AdmBanR        GET POST
     /admin/ban/options   AdmBanOptionsR POST
+    /admin/user          AdmUserR       GET POST
     /forum/#Int64        ForumR         GET POST
     /forum/#Int64/#Int64 ForumPageR     GET
     /topic/#Int64        TopicR         GET POST
@@ -190,6 +191,8 @@ adminRouteToText AdmBanR        = "Manage Ban"
 adminRouteToText AdmBanOptionsR = "Ban Options"
 adminRouteToText AdmCategoryR   = "Manage Categories"
 adminRouteToText AdmForumR      = "Manage Forums"
+adminRouteToText AdmUserR       = "Manage User"
+adminRouteToText _              = "Fix Me"
 
 profileLayout ::
      Key Users -> Text -> Grouping -> Entity Users -> Widget -> Handler Html
@@ -208,4 +211,6 @@ allowedToEditProfile uid group profileid =
   profileid == uid || group == Administrator || group == Moderator
 
 profileRouteToText :: Route App -> Text
-profileRouteToText ProfileR = "Common Information"
+profileRouteToText ProfileR  = "Common Information"
+profileRouteToText (UserR _) = "Common Information of user"
+profileRouteToText _         = "Not Needed"
