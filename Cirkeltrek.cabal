@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 62d7c6c506dc8823a51cbe13d0a09a1cf64d63da543b3fda96391eff8a67dfb3
+-- hash: bee8b7a4958f96c7910c49ecaf6f03251589c8132d7447159ba6b32fbb46179f
 
 name:           Cirkeltrek
 version:        0.0.0
@@ -17,6 +17,7 @@ library
       DBOp.CRUDForum
       DBOp.CRUDGroup
       DBOp.CRUDPost
+      DBOp.CRUDReport
       DBOp.CRUDTopic
       DBOp.CRUDUser
       Flux.Adm.Ban
