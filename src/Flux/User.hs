@@ -95,6 +95,7 @@ getAllUsers ascending = do
   return $ map (\(Value a, x) -> (a, x)) groupandusers
 
 searchUserByConditions username groupid orderby ascending = do
-  groupandusers <- liftHandler $ runDB $ selectUsersBySearchConditions username groupid orderby ascending
+  groupandusers <-
+    liftHandler $
+    runDB $ selectUsersBySearchConditions username groupid orderby ascending
   return $ map (\(Value a, x) -> (a, x)) groupandusers
-
