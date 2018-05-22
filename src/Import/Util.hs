@@ -3,11 +3,14 @@ module Import.Util
   ( forceTextToInt64
   , zip8
   , timeZone
+  , glist
   ) where
 
 import           ClassyPrelude.Yesod
-
 import           Data.Time.LocalTime
+import           Database.Esqueleto  (fromSqlKey)
+
+import           Model               (groupsGrouping)
 
 forceTextToInt64 :: Text -> Int64
 forceTextToInt64 t =
@@ -44,3 +47,9 @@ zipWith8 z _ _ _ _ _ _ _ _ = []
 
 timeZone :: TimeZone
 timeZone = TimeZone 420 False "Jakarta"
+
+glist gs =
+  map
+    (\x ->
+       (pack . show . groupsGrouping $ entityVal x, fromSqlKey . entityKey $ x))
+    gs :: [(Text, Int64)]
