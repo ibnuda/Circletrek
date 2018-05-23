@@ -92,3 +92,18 @@ updatePostContent pid content = do
   update $ \post -> do
     set post [PostsContent =. val content]
     where_ (post ^. PostsId ==. val pid)
+
+selectPostByPosterId ::
+     ( PersistUniqueRead backend
+     , PersistQueryRead backend
+     , BackendCompatible SqlBackend backend
+     , MonadIO m
+     )
+  => Key Users
+  -> ReaderT backend m [Entity Posts]
+selectPostByPosterId userid = do
+  select $
+    from $ \post -> do
+      where_ (post ^. PostsUserId ==. val userid)
+      orderBy [desc (post ^. PostsTime)]
+      return post

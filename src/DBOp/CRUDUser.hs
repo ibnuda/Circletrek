@@ -170,3 +170,13 @@ updateUserPassword uid password = do
   update $ \user -> do
     set user [UsersPassword =. val password]
     where_ (user ^. UsersId ==. val uid)
+
+updateUserIncrementPost uid = do
+  update $ \user -> do
+    set user [UsersRepliesPosted +=. val 1]
+    where_ (user ^. UsersId ==. val uid)
+
+updateUserIncrementTopic uid = do
+  update $ \user -> do
+    set user [UsersTopicsStarted +=. val 1]
+    where_ (user ^. UsersId ==. val uid)
