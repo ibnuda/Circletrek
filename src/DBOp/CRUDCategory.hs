@@ -2,6 +2,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude     #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE Rank2Types            #-}
+{-# LANGUAGE RankNTypes            #-}
 {-# LANGUAGE TypeFamilies          #-}
 
 module DBOp.CRUDCategory where
@@ -11,35 +13,18 @@ import           Import                        hiding (Value, groupBy, (==.))
 import           Database.Esqueleto
 import           Database.Esqueleto.PostgreSQL
 
-insertCategory ::
-     (BaseBackend backend ~ SqlBackend, PersistStoreWrite backend, MonadIO m)
-  => Text
-  -> ReaderT backend m (Key Categories)
+insertCategory :: Text -> DB (Key Categories)
 insertCategory catname = do
   insert $ Categories catname
 
-selectAllCategory ::
-     ( PersistUniqueRead b
-     , PersistQueryRead b
-     , BackendCompatible SqlBackend b
-     , MonadIO m
-     )
-  => ReaderT b m [Entity Categories]
+selectAllCategory :: DB [Entity Categories]
 selectAllCategory = do
   select $
     from $ \category -> do
       orderBy [asc (category ^. CategoriesName)]
       return category
 
-deleteCategory ::
-     ( BaseBackend backend ~ SqlBackend
-     , PersistQueryWrite backend
-     , BackendCompatible SqlBackend backend
-     , PersistUniqueRead backend
-     , MonadIO m
-     )
-  => Key Categories
-  -> ReaderT backend m ()
+deleteCategory :: Key Categories -> DB ()
 deleteCategory cid = do
   cat <-
     select $
@@ -49,20 +34,15 @@ deleteCategory cid = do
   forM_ cat (deleteCascade . entityKey)
 
 selectCategoriesForIndex ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => ReaderT backend m [( Text
-                        , Maybe [Key Forums]
-                        , Maybe [Text]
-                        , Maybe [Maybe Text]
-                        , Maybe [Int]
-                        , Maybe [Int]
-                        , Maybe [Maybe UTCTime]
-                        , Maybe [Maybe (Key Posts)]
-                        , Maybe [Maybe Text])]
+     DB [( Text
+         , Maybe [Key Forums]
+         , Maybe [Text]
+         , Maybe [Maybe Text]
+         , Maybe [Int]
+         , Maybe [Int]
+         , Maybe [Maybe UTCTime]
+         , Maybe [Maybe (Key Posts)]
+         , Maybe [Maybe Text])]
 selectCategoriesForIndex = do
   catnameandforums <-
     select $

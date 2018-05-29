@@ -15,15 +15,7 @@ import           DBOp.CRUDUser
 
 import           Handler.User
 
-getTopicById ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Topics
-  -> m (Entity Topics)
+getTopicById :: Key Topics -> Handler (Entity Topics)
 getTopicById tid = do
   topics <- liftHandler $ runDB $ selectTopicById tid
   case topics of

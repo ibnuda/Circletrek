@@ -18,15 +18,9 @@ import           DBOp.CRUDUser
 import Flux.Miscellaneous
 
 unusedUser ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Text
+     Text
   -> Text
-  -> m ()
+  -> Handler ()
 unusedUser username email = do
   users <- liftHandler $ runDB $ selectUserByUsernameOrEmail username email
   case users of
@@ -34,33 +28,15 @@ unusedUser username email = do
     _  -> invalidArgs ["Username and/or email has been used."]
 
 getUserById ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
-  -> m (Entity Users)
+     Key Users
+  -> Handler (Entity Users)
 getUserById uid = do
   users <- liftHandler $ runDB $ selectUserById uid
   case users of
     []  -> notFound
     x:_ -> return x
 
-registerUser ::
-     ( BaseBackend (YesodPersistBackend (HandlerSite m)) ~ SqlBackend
-     , PersistStoreWrite (YesodPersistBackend (HandlerSite m))
-     , MonadHandler m
-     , YesodPersist (HandlerSite m)
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     )
-  => Text
-  -> Text
-  -> Text
-  -> m (Key Users)
+registerUser :: Text -> Text -> Text -> Handler (Key Users)
 registerUser username password email = do
   unusedUser username email
   now <- liftIO getCurrentTime
@@ -78,36 +54,27 @@ registerUser username password email = do
           email
           now
 
+getUsersByConditions ::
+     Maybe (Key Groups)
+  -> Maybe Text
+  -> Maybe Text
+  -> Handler [(Entity Users, Grouping)]
 getUsersByConditions mgid musername memail = do
   userandgroup <-
     liftHandler $ runDB $ selectUsersByConditions mgid musername memail
   return $ map (\(user, Value group) -> (user, group)) userandgroup
 
-getAllUsers ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Bool
-  -> m [(Grouping, Entity Users)]
+getAllUsers :: Bool -> Handler [(Grouping, Entity Users)]
 getAllUsers ascending = do
   groupandusers <- liftHandler $ runDB $ selectAllUsers ascending
   return $ map (\(Value a, x) -> (a, x)) groupandusers
 
 searchUserByConditions ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Maybe Text
+     Maybe Text
   -> Maybe (Key Groups)
   -> SortBy
   -> Bool
-  -> m [(Grouping, Entity Users)]
+  -> Handler [(Grouping, Entity Users)]
 searchUserByConditions username groupid orderby ascending = do
   groupandusers <-
     liftHandler $
@@ -115,16 +82,7 @@ searchUserByConditions username groupid orderby ascending = do
   return $ map (\(Value a, x) -> (a, x)) groupandusers
 
 selfUpdateInfoByUser ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , MonadHandler m
-     , YesodPersist (HandlerSite m)
-     )
-  => Key Users
-  -> Maybe Text
-  -> Maybe Text
-  -> Maybe Text
-  -> Text
-  -> m ()
+     Key Users -> Maybe Text -> Maybe Text -> Maybe Text -> Text -> Handler ()
 selfUpdateInfoByUser userid userpass oldpass newpass email = do
   case (userpass, oldpass, newpass) of
     (Nothing, _, _) -> error "Your profile is broken. Ask admin to fix this."
@@ -145,15 +103,7 @@ selfUpdateInfoByUser userid userpass oldpass newpass email = do
               updateUserPassword userid (Just $ decodeUtf8 newpassword)
         else invalidArgs ["Your password don't match with the old one."]
 
-updateInfoByAdmin ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , MonadHandler m
-     , YesodPersist (HandlerSite m)
-     )
-  => Key Users
-  -> Maybe Text
-  -> Text
-  -> m ()
+updateInfoByAdmin :: Key Users -> Maybe Text -> Text -> Handler ()
 updateInfoByAdmin userid Nothing email = liftHandler $ runDB $ updateUserEmail userid email
 updateInfoByAdmin userid (Just np) email =
   liftHandler $
@@ -162,26 +112,10 @@ updateInfoByAdmin userid (Just np) email =
     updateUserEmail userid email
     updateUserPassword userid (Just $ decodeUtf8 newpassword)
 
-getUserPosts ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
-  -> m [Entity Posts]
+getUserPosts :: Key Users -> Handler [Entity Posts]
 getUserPosts = liftHandler . runDB . selectPostByPosterId
 
-getUserTopics ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
-  -> m [(Text, Entity Topics)]
+getUserTopics :: Key Users -> Handler [(Text, Entity Topics)]
 getUserTopics userid = do
   topics <- liftHandler . runDB . selectTopicForumNameByPosterId $ userid
   return $ map (\(Value forumname, x) -> (forumname, x)) topics

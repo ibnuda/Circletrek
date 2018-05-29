@@ -11,37 +11,19 @@ import           Database.Esqueleto
 
 import           DBOp.CRUDReport
 
-getAllZappedReports ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend site)
-     , PersistQueryRead (YesodPersistBackend site)
-     , PersistUniqueRead (YesodPersistBackend site)
-     , YesodPersist site
-     )
-  => HandlerFor site [(Entity Reports, Text, Text, Text, Text)]
+getAllZappedReports :: Handler [(Entity Reports, Text, Text, Text, Text)]
 getAllZappedReports = do
   reports <- liftHandler $ runDB $ selectReportsZappedInfo
   return $
     map (\(x, Value a, Value b, Value c, Value d) -> (x, a, b, c, d)) reports
 
 getAllUnzappedReports ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend site)
-     , PersistQueryRead (YesodPersistBackend site)
-     , PersistUniqueRead (YesodPersistBackend site)
-     , YesodPersist site
-     )
-  => HandlerFor site [(Entity Reports, Text, Text, Text)]
+     Handler [(Entity Reports, Text, Text, Text)]
 getAllUnzappedReports = do
   reports <- liftHandler $ runDB $ selectReportsUnzappedInfo
   return $ map (\(x, Value a, Value b, Value c) -> (x, a, b, c)) reports
 
-readReports ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
-  -> [Text]
-  -> m ()
+readReports :: Key Users -> [Text] -> Handler ()
 readReports uid reportids = do
   liftHandler $
     runDB $ do
@@ -50,4 +32,4 @@ readReports uid reportids = do
       forM_ y $ \z -> do
         case z of
           Nothing -> return ()
-          Just x -> updateReportZap uid x
+          Just x  -> updateReportZap uid x

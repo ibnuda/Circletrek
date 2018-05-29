@@ -9,19 +9,10 @@ import           Import             hiding (Value)
 
 import           Database.Esqueleto
 import           DBOp.CRUDPost
-import           DBOp.CRUDTopic
 import           DBOp.CRUDReport
+import           DBOp.CRUDTopic
 
-getPostsInTopic ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Topics
-  -> Int64
-  -> m [Entity Posts]
+getPostsInTopic :: Key Topics -> Int64 -> Handler [Entity Posts]
 getPostsInTopic tid page
   | page < 1 = invalidArgs ["Have you seen something page 0 before?"]
   | otherwise = do
@@ -30,15 +21,7 @@ getPostsInTopic tid page
       [] -> notFound -- because there's none. lol.
       _  -> return posts
 
-getPostById ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Posts
-  -> m (Entity Posts)
+getPostById :: Key Posts -> Handler (Entity Posts)
 getPostById pid
   | pid < (toSqlKey 1) = invalidArgs ["Please..."]
   | otherwise = do
@@ -48,17 +31,8 @@ getPostById pid
       x:_ -> return x
 
 getPostParentInformation ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Posts
-  -> m ( Value Text
-       , Value (Key Forums)
-       , Value Text
-       , Entity Posts)
+     Key Posts
+  -> Handler (Value Text, Value (Key Forums), Value Text, Entity Posts)
 getPostParentInformation pid = do
   postandparent <- liftHandler $ runDB $ selectPostAndItsParentsInfo pid
   case postandparent of
@@ -66,16 +40,7 @@ getPostParentInformation pid = do
     x:_ -> return x
 
 editPostByUidGroupAndContent ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
-  -> Grouping
-  -> Key Posts
-  -> Key Users
-  -> Text
-  -> m ()
+     Key Users -> Grouping -> Key Posts -> Key Users -> Text -> Handler ()
 editPostByUidGroupAndContent _ group pid _ content
   | group == Administrator || group == Moderator =
     liftHandler $ runDB $ updatePostContent pid content
@@ -86,17 +51,7 @@ editPostByUidGroupAndContent uid Member pid uid' content
   | otherwise = liftHandler $ runDB $ updatePostContent pid content
 
 createReport ::
-     ( BaseBackend (YesodPersistBackend (HandlerSite m)) ~ SqlBackend
-     , PersistStoreWrite (YesodPersistBackend (HandlerSite m))
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Posts
-  -> Key Topics
-  -> Key Forums
-  -> Key Users
-  -> Text
-  -> m ()
+     Key Posts -> Key Topics -> Key Forums -> Key Users -> Text -> Handler ()
 createReport pid tid fid uid message = do
   now <- liftIO getCurrentTime
   liftHandler $ runDB $ insertReport pid tid fid uid now message Nothing Nothing

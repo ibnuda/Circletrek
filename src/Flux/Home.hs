@@ -12,20 +12,15 @@ import           Database.Esqueleto
 import           DBOp.CRUDCategory
 
 getCategoriesForIndex ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend site)
-     , PersistQueryRead (YesodPersistBackend site)
-     , PersistUniqueRead (YesodPersistBackend site)
-     , YesodPersist site
-     )
-  => HandlerFor site [( Text
-                      , [( Key Forums
-                         , Text
-                         , Maybe Text
-                         , Int
-                         , Int
-                         , Maybe UTCTime
-                         , Maybe (Key Posts)
-                         , Maybe Text)])]
+     Handler [( Text
+              , [( Key Forums
+                 , Text
+                 , Maybe Text
+                 , Int
+                 , Int
+                 , Maybe UTCTime
+                 , Maybe (Key Posts)
+                 , Maybe Text)])]
 getCategoriesForIndex = do
   categoriesandforums <- liftHandler $ runDB $ selectCategoriesForIndex
   return $ map catNZip8 categoriesandforums

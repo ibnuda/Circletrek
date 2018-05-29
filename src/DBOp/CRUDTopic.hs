@@ -1,3 +1,5 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude     #-}
@@ -13,12 +15,7 @@ import           Import                        hiding (Value, groupBy, on,
 import           Database.Esqueleto
 import           Database.Esqueleto.PostgreSQL
 
-insertTopic ::
-     (BaseBackend backend ~ SqlBackend, MonadIO m, PersistStoreWrite backend)
-  => Key Forums
-  -> Text
-  -> Text
-  -> ReaderT backend m (Key Topics)
+insertTopic :: Key Forums -> Text -> Text -> DB (Key Topics)
 insertTopic fid poster subject = do
   now <- liftIO getCurrentTime
   let topicsForumId = fid
@@ -32,34 +29,21 @@ insertTopic fid poster subject = do
       topicsIsLocked = False
   insert Topics {..}
 
-selectTopicById ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => Key Topics
-  -> ReaderT backend m [Entity Topics]
+selectTopicById :: Key Topics -> DB [Entity Topics]
 selectTopicById tid = do
   select $ from $ \topic -> do
     where_ (topic ^. TopicsId ==. val tid)
     limit 1
     return topic
 
-updateTopicIsLocked ::
-     MonadIO m => Key Topics -> Bool -> ReaderT SqlBackend m ()
+updateTopicIsLocked :: Key Topics -> Bool -> DB ()
 updateTopicIsLocked tid locked = do
   update $ \topic -> do
     set topic [TopicsIsLocked =. val locked]
     where_ (topic ^. TopicsId ==. val tid)
 
 updateTopicIncrementReplyAndLasts ::
-     MonadIO m
-  => Key Topics
-  -> Text
-  -> Key Posts
-  -> UTCTime
-  -> ReaderT SqlBackend m ()
+     Key Topics -> Text -> Key Posts -> UTCTime -> DB ()
 updateTopicIncrementReplyAndLasts tid username pid now = do
   update $ \topic -> do
     set
@@ -71,14 +55,7 @@ updateTopicIncrementReplyAndLasts tid username pid now = do
       ]
     where_ (topic ^. TopicsId ==. val tid)
 
-selectTopicForumNameByPosterId ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => Key Users
-  -> ReaderT backend m [(Value Text, Entity Topics)]
+selectTopicForumNameByPosterId :: Key Users -> DB [(Value Text, Entity Topics)]
 selectTopicForumNameByPosterId userid = do
   select $
     from $ \(forum `InnerJoin` topic `InnerJoin` user) -> do

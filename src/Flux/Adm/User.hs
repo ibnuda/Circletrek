@@ -18,19 +18,7 @@ import           Flux.User
 import           Flux.Adm.Ban
 
 promoteUser ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , YesodPersist (HandlerSite m)
-     , BackendCompatible SqlBackend (YesodPersistBackend (HandlerSite m))
-     , PersistQueryRead (YesodPersistBackend (HandlerSite m))
-     , PersistUniqueRead (YesodPersistBackend (HandlerSite m))
-     , MonadHandler m
-     )
-  => Key Users
-  -> Text
-  -> Grouping
-  -> Key Users
-  -> Key Groups
-  -> m ()
+     Key Users -> Text -> Grouping -> Key Users -> Key Groups -> Handler ()
 promoteUser execid execname execgroup targetid targetgroupid = do
   guardUser execid targetid
   guardGroup execgroup

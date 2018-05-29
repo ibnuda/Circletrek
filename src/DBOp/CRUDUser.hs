@@ -16,26 +16,15 @@ import           Database.Esqueleto
 import           DBOp.CRUDGroup
 
 insertUser ::
-     (BaseBackend backend ~ SqlBackend, PersistStoreWrite backend, MonadIO m)
-  => Key Groups
-  -> Text
-  -> Maybe Text
-  -> Text
-  -> UTCTime
-  -> ReaderT backend m (Key Users)
+     Key Groups -> Text -> Maybe Text -> Text -> UTCTime -> DB (Key Users)
 insertUser usersGroupId usersUsername usersPassword usersEmail usersJoinTime = do
   let usersRepliesPosted = 0
       usersTopicsStarted = 0
   insert $ Users {..}
 
 selectUserById ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => Key Users
-  -> ReaderT backend m [Entity Users]
+  Key Users
+  -> DB [Entity Users]
 selectUserById uid = do
   select $
     from $ \user -> do
@@ -43,15 +32,7 @@ selectUserById uid = do
       limit 1
       return user
 
-selectUserByUsernameOrEmail ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => Text
-  -> Text
-  -> ReaderT backend m [Entity Users]
+selectUserByUsernameOrEmail :: Text -> Text -> DB [Entity Users]
 selectUserByUsernameOrEmail username email = do
   select $
     from $ \user -> do
@@ -61,8 +42,7 @@ selectUserByUsernameOrEmail username email = do
       limit 1
       return user
 
-updateUserGroupingByUsername ::
-     MonadIO m => Text -> Grouping -> ReaderT SqlBackend m ()
+updateUserGroupingByUsername :: Text -> Grouping -> DB ()
 updateUserGroupingByUsername username grouping = do
   [x] <- selectGroupByGrouping grouping
   update $ \user -> do
@@ -79,15 +59,10 @@ qbuilder _ _ Nothing           = val True
 qbuilder ent accessor (Just v) = ent ^. accessor ==. val v
 
 selectUsersByConditions ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => Maybe (Key Groups)
+     Maybe (Key Groups)
   -> Maybe Text
   -> Maybe Text
-  -> ReaderT backend m [(Entity Users, Value Grouping)]
+  -> DB [(Entity Users, Value Grouping)]
 selectUsersByConditions mgid musername memail = do
   select $
     from $ \(user, group) -> do
@@ -100,16 +75,11 @@ selectUsersByConditions mgid musername memail = do
       return (user, group ^. GroupsGrouping)
 
 selectUsersBySearchConditions ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => Maybe Text
+     Maybe Text
   -> Maybe (Key Groups)
   -> SortBy
   -> Bool
-  -> ReaderT backend m [(Value Grouping, Entity Users)]
+  -> DB [(Value Grouping, Entity Users)]
 selectUsersBySearchConditions username groupid orderby ascending = do
   select $
     from $ \(user, group) -> do
@@ -138,14 +108,7 @@ chooseAscension ::
 chooseAscension True e  = asc e
 chooseAscension False e = desc e
 
-selectAllUsers ::
-     ( PersistUniqueRead backend
-     , PersistQueryRead backend
-     , BackendCompatible SqlBackend backend
-     , MonadIO m
-     )
-  => Bool
-  -> ReaderT backend m [(Value Grouping, Entity Users)]
+selectAllUsers :: Bool -> DB [(Value Grouping, Entity Users)]
 selectAllUsers ascending = do
   let op =
         if ascending
@@ -157,25 +120,25 @@ selectAllUsers ascending = do
       orderBy [op (user ^. UsersUsername)]
       return (group ^. GroupsGrouping, user)
 
-updateUserEmail ::
-  MonadIO m => Key Users -> Text -> ReaderT SqlBackend m ()
+updateUserEmail :: Key Users -> Text -> DB ()
 updateUserEmail uid email = do
   update $ \user -> do
     set user [UsersEmail =. val email]
     where_ (user ^. UsersId ==. val uid)
 
-updateUserPassword ::
-     MonadIO m => Key Users -> Maybe Text -> ReaderT SqlBackend m ()
+updateUserPassword :: Key Users -> Maybe Text -> DB ()
 updateUserPassword uid password = do
   update $ \user -> do
     set user [UsersPassword =. val password]
     where_ (user ^. UsersId ==. val uid)
 
+updateUserIncrementPost :: Key Users -> DB ()
 updateUserIncrementPost uid = do
   update $ \user -> do
     set user [UsersRepliesPosted +=. val 1]
     where_ (user ^. UsersId ==. val uid)
 
+updateUserIncrementTopic :: Key Users -> DB ()
 updateUserIncrementTopic uid = do
   update $ \user -> do
     set user [UsersTopicsStarted +=. val 1]

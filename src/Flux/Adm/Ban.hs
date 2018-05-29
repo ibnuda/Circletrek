@@ -13,29 +13,17 @@ import           DBOp.CRUDBan
 import           DBOp.CRUDGroup
 import           DBOp.CRUDUser
 
-getAllBanneds ::
-     ( BackendCompatible SqlBackend (YesodPersistBackend site)
-     , PersistQueryRead (YesodPersistBackend site)
-     , PersistUniqueRead (YesodPersistBackend site)
-     , YesodPersist site
-     )
-  => HandlerFor site [( Value (Key Users)
-                      , Entity Banneds
-                      , Value Text)]
+getAllBanneds :: Handler [(Value (Key Users), Entity Banneds, Value Text)]
 getAllBanneds = liftHandler $ runDB $ selectAllBanneds
 
 banUser ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
+     Key Users
   -> p
   -> Grouping
   -> Text
   -> Maybe Text
   -> Maybe Text
-  -> m ()
+  -> Handler ()
 banUser execid execname execgroup username ip message = do
   gusername <- liftHandler $ runDB $ selectGroupByUsername username
   case gusername of
@@ -51,31 +39,18 @@ banUser execid execname execgroup username ip message = do
         (Left x, _)      -> invalidArgs [x]
 
 banUserById ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
+     Key Users
   -> p
   -> Grouping
   -> Key Users
   -> Maybe Text
   -> Maybe Text
-  -> m ()
+  -> Handler ()
 banUserById execid execname execgroup userid ip message = do
   [user] <- liftHandler $ runDB $ selectUserById userid
   banUser execid execname execgroup (usersUsername $ entityVal user) ip message
 
-unbanUser ::
-     ( YesodPersistBackend (HandlerSite m) ~ SqlBackend
-     , YesodPersist (HandlerSite m)
-     , MonadHandler m
-     )
-  => Key Users
-  -> Text
-  -> Grouping
-  -> Text
-  -> m ()
+unbanUser :: Key Users -> Text -> Grouping -> Text -> Handler ()
 unbanUser execid execname execgroup username = do
   gusernames <- liftHandler $ runDB $ selectGroupByUsername username
   case gusernames of
